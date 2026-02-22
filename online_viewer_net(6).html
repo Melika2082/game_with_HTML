@@ -1,0 +1,201 @@
+Put your HTML text here<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مسابقه هدیه های ششم</title>
+
+<style>
+body{
+    font-family:tahoma;
+    direction:rtl;
+    text-align:center;
+    margin:0;
+    padding:20px;
+    background:#f0fff0;
+    border:15px solid #6abf69;
+}
+
+/* گل های پایین صفحه */
+body::after{
+    content:"🌸🌺🌼🌷🌹🌻";
+    font-size:30px;
+    position:fixed;
+    bottom:5px;
+    width:100%;
+    left:0;
+}
+
+.box{
+    background:white;
+    padding:25px;
+    border-radius:20px;
+    max-width:650px;
+    margin:auto;
+    box-shadow:0 0 20px rgba(0,0,0,0.3);
+    border:4px dashed #4CAF50;
+}
+
+input{
+    width:80%;
+    padding:10px;
+    border-radius:10px;
+    border:2px solid #2196F3;
+    margin-top:15px;
+}
+
+button{
+    padding:10px 20px;
+    margin:10px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.start-btn{background:#9C27B0;color:white;}
+.check-btn{background:#4CAF50;color:white;}
+.next-btn{background:#FFEB3B;color:black;display:none;}
+
+.feedback{
+    font-size:18px;
+    font-weight:bold;
+    margin-top:15px;
+}
+
+#rocket{
+    font-size:60px;
+    transition:all 2s ease;
+}
+
+.teacher-box{
+    margin-top:30px;
+    background:white;
+    border-radius:20px;
+    padding:15px;
+    border:3px solid #ff69b4;
+    box-shadow:0 0 15px pink;
+}
+.teacher-box img{width:80px;}
+</style>
+</head>
+
+<body>
+
+<div class="box" id="startScreen">
+<h2>🎮 مسابقه درس هدیه های ششم 🎮</h2>
+<p>نام خود را وارد کنید:</p>
+<input type="text" id="studentName">
+<br>
+<button class="start-btn" onclick="startGame()">شروع مسابقه</button>
+<div id="countdown"></div>
+<div id="rocket">🚀</div>
+</div>
+
+<div class="box" id="gameBox" style="display:none;">
+<h2 id="welcome"></h2>
+<h3 id="question"></h3>
+<input type="text" id="answer" placeholder="جواب خود را بنویسید">
+<br>
+<button class="check-btn" onclick="checkAnswer()">بررسی پاسخ</button>
+<button class="next-btn" onclick="nextQuestion()">سوال بعدی</button>
+<div class="feedback" id="feedback"></div>
+</div>
+
+<div class="teacher-box">
+🌸🌺🌼<br>
+<img src="https://cdn-icons-png.flaticon.com/512/201/201818.png">
+<p><strong>آموزگار : خانم طائی</strong></p>
+</div>
+
+<script>
+
+const questions=[
+{q:"نام امام هفتم چیست؟",a:["امام موسی کاظم"]},
+{q:"مناسبت ۱۷ ربیع الاول چیست؟",a:["میلاد پیامبر اسلام"]},
+{q:"غیبت صغری چندسال طول کشید؟",a:["69 سال","۶۹ سال"]},
+{q:"جامعه اسلامی را چه کسی باید مدیریت کند؟",a:["ولی فقیه"]},
+{q:"خداوند در سوره حمد با چه نامی از قیامت یاد کرده است؟",a:["یوم الدین روز جزا","یوم الدین"]},
+{q:"نتیجه قیام امام حسین (ع) چه بود؟",a:["بیداری امت اسلامی","قیام هایی با الگو گرفتن از قیام امام حسین"]},
+{q:"امر به معروف یعنی چه؟",a:["امر کردن به کارهای خوب و پسندیده"]},
+{q:"توحید به چه معناست؟",a:["خداوند یکتا است و جز او خدایی نیست"]},
+{q:"اصول دینی ما مسلمانان را نام ببرید.",a:["توحید","عدل","نبوت","امامت","معاد"]},
+{q:"در سوره توحید به کدام صفات خداوند اشاره شده است؟",a:["یگانگی","بی نیازی"]}
+];
+
+let current=0;
+let student="";
+
+function startGame(){
+student=document.getElementById("studentName").value;
+if(student==""){alert("نام را وارد کنید");return;}
+
+let count=3;
+let countdown=document.getElementById("countdown");
+let rocket=document.getElementById("rocket");
+
+let interval=setInterval(()=>{
+countdown.innerHTML="⏳ "+count;
+count--;
+if(count<0){
+clearInterval(interval);
+rocket.style.transform="translateY(-300px)";
+setTimeout(()=>{
+document.getElementById("startScreen").style.display="none";
+document.getElementById("gameBox").style.display="block";
+document.getElementById("welcome").innerText="موفق باشی "+student+" 🌟";
+loadQuestion();
+},2000);
+}
+},1000);
+}
+
+function loadQuestion(){
+document.getElementById("question").innerText="سوال "+(current+1)+": "+questions[current].q;
+}
+
+function checkAnswer(){
+let user=document.getElementById("answer").value.trim();
+let correct=questions[current].a;
+let feedback=document.getElementById("feedback");
+
+if(correct.length>1){
+let ok=true;
+for(let i=0;i<correct.length;i++){
+if(!user.includes(correct[i])) ok=false;
+}
+if(ok){
+feedback.innerHTML="🎉 آفرین عالی بود! 🌟😊";
+document.querySelector(".next-btn").style.display="inline-block";
+}else{
+feedback.innerHTML="❌ متاسفم دوباره تلاش کن 🙂";
+}
+}else{
+if(correct.includes(user)){
+feedback.innerHTML="🎉 آفرین عالی بود! 🌟😊";
+document.querySelector(".next-btn").style.display="inline-block";
+}else{
+feedback.innerHTML="❌ متاسفم دوباره تلاش کن 🙂";
+}
+}
+}
+
+function nextQuestion(){
+current++;
+if(current<questions.length){
+loadQuestion();
+document.getElementById("answer").value="";
+document.getElementById("feedback").innerHTML="";
+document.querySelector(".next-btn").style.display="none";
+}else{
+document.getElementById("question").innerText="🎊 مسابقه تمام شد "+student+" عزیز! آفرین 🌈";
+document.getElementById("answer").style.display="none";
+document.querySelector(".check-btn").style.display="none";
+document.querySelector(".next-btn").style.display="none";
+}
+}
+
+</script>
+
+</body>
+</html>
